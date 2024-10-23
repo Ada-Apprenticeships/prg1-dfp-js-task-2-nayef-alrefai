@@ -4,8 +4,17 @@ const inputFile = './datafile.csv';
 const outputFile = './outputfile.csv';
 
 function processInput(datasheet, delimiter = ';'){
+  
   const lines = fs.readFileSync(datasheet, 'utf-8').split(/\n/);
   const orderedLines = [];
+  
+  if (!fs.existsSync(indata)) {
+    return -1;
+  }
+  if (fs.existsSync(outdata)) {
+    fs.unlinkSync(outdata);
+    console.log("Output file existed and was deleted.");
+  }
 
   for (const line of lines) {
 
@@ -28,13 +37,31 @@ function cleanInput(orderedLines){
 
     const trimmedLine = line.length > 20 ? line.slice(0,20) : line;
 
-    cleanedLined.push(trimmedLine)
+    cleanedLines.push(trimmedLine)
   }
   return cleanedLines;
 }
-console.log(cleanedLines)
-function parseFile(indata, outdata, delimiter = ';') {}
 
+function parseFile(indata, outdata, delimiter = ';') {
+ // Check if output file exists and delete it if it does
+const processedLines = processInput(indata, delimiter);
+
+const processedData = cleanInput(processedLines);
+
+fs.writeFileSync(outdata, processedData.join('\n'));
+return processedData.length;
+}
+
+// Example usage (for testing purposes)
+//const processedData = processInput(inputFile);
+//const cleanedData = cleanInput(processedData);
+//console.log(cleanedData); // See the cleaned output
+
+
+// Leave this code here for the automated tests
+module.exports = {
+  parseFile,
+};
 
 
 
