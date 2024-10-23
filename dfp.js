@@ -1,27 +1,61 @@
 const fs = require('fs');
 
-const inputFile = "datafile.csv";
-const outputFile = "outputfile.csv";
+const inputFile = "./datafile.csv";
+const outputFile = "./outputfile.csv";
 
-function parseFile (indata, outdata, delimiter = ';') {
-  //check if input file exists
-  const doesInputExist = fs.existsSync(indata) ? 'input file exists':'Input file does not exist';
-  console.log(doesInputExist);
 
-  //check if output file exists
-  if (fs.existsSync(outdata)) {
-    fs.unlinkSync(outdata);
+// process the input data
+function processData(data, delimiter = ';') {
+  const lines = data.split(/\n/);
+  const processedLines = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const fields = line.split(delimiter);
+
+    if (fields.length > 0) {
+      const reviewIndex = fields.length - 1;
+      fields[reviewIndex] = fields[reviewIndex].trim().substring(0, 20);
+    }
+
+    if (fields.length > 1) {
+      const temp = fields[0];
+      fields[0] = fields[fields.length - 1];
+      fields[fields.length - 1] = temp;
+    }
+
+    // Join the fields back with a comma and add to processedLines
+    processedLines.push(fields.join(','));
   }
 
-  //proceed with input file handling
-    if (fs.existsSync(indata)) {
-      // Read and process the input file
-      const data = fs.readFileSync(indata, "utf-8");
-      const lines = data.split("\n");
+  return processedLines;
 }
-      const processedData = lines.map(line => line.split(delimiter).join(','));
+
+// Check if input file exists
+function parseFile(indata, outdata, delimiter = ';') {
+  
+  const doesInputExist = fs.existsSync(indata) ? '1' : '-1';
+  console.log(doesInputExist);
+
+  // Check if output file exists and delete it if it does
+  if (fs.existsSync(outdata)) {
+    fs.unlinkSync(outdata);
+    console.log("Output file existed and was deleted.");
+  }
+
+  // Read the input file
+  const data = fs.readFileSync(indata, "utf-8", );
+
+  // Process the data using the separate function
+  const processedData = processData(data, delimiter);
+
+  // Write processed data to the output file
+  fs.writeFileSync(outdata, processedData.join("\n"));
+  console.log("Data processed and written to output file.");
 }
-console.log(parseFile(inputFile, outputFile))
+
+// Example usage
+parseFile(inputFile, outputFile) 
 
 
 
