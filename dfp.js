@@ -3,46 +3,37 @@ const fs = require('fs');
 const inputFile = "./datafile.csv";
 const outputFile = "./outputfile.csv";
 
-
 // process the input data
 function processData(data, delimiter = ';') {
   const lines = data.split(/\n/);
   const processedLines = [];
 
-  for (let i = 0; i < lines.length; i++) {
+  for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
     const fields = line.split(delimiter);
 
-    if (fields.length > 0) {
-      const reviewIndex = fields.length - 1;
-      fields[reviewIndex] = fields[reviewIndex].trim().substring(0, 20);
-    }
+    if (fields.length === 2) {
+      
+      const review = fields[0].trim().substring(0, 20); 
+      const reviewType = fields[1].trim(); 
 
-    if (fields.length > 1) {
-      const temp = fields[0];
-      fields[0] = fields[fields.length - 1];
-      fields[fields.length - 1] = temp;
+      processedLines.push(`${reviewType},${review}`);
     }
-
-    // Join the fields back with a comma and add to processedLines
-    processedLines.push(fields.join(','));
   }
-
   return processedLines;
 }
 
 // Check if input file exists
 function parseFile(indata, outdata, delimiter = ';') {
-  
-  const doesInputExist = fs.existsSync(indata) ? '1' : '-1';
-  console.log(doesInputExist);
-
+  if (!fs.existsSync(indata)) {
+    console.log("-1");
+    return; 
+  }
   // Check if output file exists and delete it if it does
   if (fs.existsSync(outdata)) {
     fs.unlinkSync(outdata);
     console.log("Output file existed and was deleted.");
   }
-
   // Read the input file
   const data = fs.readFileSync(indata, "utf-8", );
 
