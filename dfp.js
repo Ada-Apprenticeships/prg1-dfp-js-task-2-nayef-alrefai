@@ -7,14 +7,6 @@ function processInput(datasheet, delimiter = ';'){
   
   const lines = fs.readFileSync(datasheet, 'utf-8').split(/\n/);
   const orderedLines = [];
-  
-  if (!fs.existsSync(indata)) {
-    return -1;
-  }
-  if (fs.existsSync(outdata)) {
-    fs.unlinkSync(outdata);
-    console.log("Output file existed and was deleted.");
-  }
 
   for (const line of lines) {
 
@@ -43,7 +35,13 @@ function cleanInput(orderedLines){
 }
 
 function parseFile(indata, outdata, delimiter = ';') {
- // Check if output file exists and delete it if it does
+ if (!fs.existsSync(indata)) {
+  return -1;
+}
+if (fs.existsSync(outdata)) {
+  fs.unlinkSync(outdata);
+  console.log("Output file existed and was deleted.");
+}
 const processedLines = processInput(indata, delimiter);
 
 const processedData = cleanInput(processedLines);
@@ -51,7 +49,7 @@ const processedData = cleanInput(processedLines);
 fs.writeFileSync(outdata, processedData.join('\n'));
 return processedData.length;
 }
-
+parseFile(inputFile, outputFile) 
 // Example usage (for testing purposes)
 //const processedData = processInput(inputFile);
 //const cleanedData = cleanInput(processedData);
